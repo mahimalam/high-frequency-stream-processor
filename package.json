@@ -1,12 +1,15 @@
 {
-  "name": "high-frequency-liquidation-engine",
+  "name": "high-frequency-stream-processor",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "High-throughput real-time WebSocket stream processor with HMAC authentication and statistical anomaly detection",
+  "main": "engine.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "tsc",
+    "start": "tsx engine.ts"
   },
-  "keywords": [],
+  "keywords": ["websocket", "streaming", "real-time", "high-frequency", "typescript"],
   "author": "",
   "license": "MIT",
   "type": "module",
@@ -18,6 +21,7 @@
     "@types/node": "^25.9.1",
     "@types/ws": "^8.18.1",
     "tsx": "^4.22.3",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^2.0.0"
   }
 }
