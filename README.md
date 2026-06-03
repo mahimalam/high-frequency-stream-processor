@@ -1,20 +1,46 @@
-# Sovereign Yield & High-Frequency Liquidation Infrastructure (Staging)
+# High-Frequency Stream Processor
 
-An enterprise-grade, low-latency off-chain analytical engine designed to process sub-second oracle reports to compute delta-neutral liquidation thresholds, protocol risk metrics, and MEV routing vectors. 
+An enterprise-grade, low-latency real-time data stream processing engine built in TypeScript. Designed for sub-second WebSocket ingestion, statistical anomaly detection, and authenticated stream consumption.
 
-## Deployment & Host Infrastructure
-- **Compute Host:** Private high-performance VPS instance deployed in Zurich (CH) cloud zones, optimized for low-latency network I/O, parallel thread execution, and real-time asynchronous processing.
-- **Runtime Core:** Node.js v20 LTS engine implementing a non-blocking asynchronous event loop with strict Network Time Protocol (NTP) synchronization to prevent sub-second signature drift.
+## Architecture
 
-## Oracle Ingestion Architecture
-The engine acts as a high-frequency off-chain consumer utilizing a persistent, multi-channel WebSocket pipeline targeting the Chainlink Data Streams (Schema v3 Crypto Advanced) infrastructure. The processing pipeline uses off-chain HMAC-SHA256 signature verification during the handshake interface to guarantee origin authenticity.
+- **Runtime:** Node.js v20 LTS with a non-blocking asynchronous event loop and NTP-synchronized timestamping
+- **Transport:** Persistent WebSocket connection with exponential-backoff auto-reconnection
+- **Auth:** HMAC-SHA256 signature generation for authenticated private stream endpoints
+- **Analytics:** Rolling 60-sample window for real-time mean/standard-deviation rate tracking and 3σ anomaly detection
 
-### Monitored Crypto Asset Matrix (Testnet Stream IDs)
-The framework targets high-volume, low-latency feeds to compute volatile liquidation constraints:
-- **BTC / USD:** `0x000359843a543ee2fe414dc14c7e7920ef10f4372990b79d6361cdc0dd1ba782`
-- **ETH / USD:** [Schema v3 Real-Time Multi-Site Aggregate Stream]
-- **SOL / USD:** [Schema v3 Real-Time Multi-Site Aggregate Stream]
-- **XRP / USD:** [Schema v3 Real-Time Multi-Site Aggregate Stream]
-- **DOGE / USD:** [Schema v3 Real-Time Multi-Site Aggregate Stream]
+## Features
 
-*Note: This repository represents our isolated development staging sandbox used exclusively for benchmarking payload handling speeds, signature validation logic, and execution thread safety under simulated high-volatility market events before full smart contract implementation.*
+- `establishLowLatencyStream` — connects to any WebSocket endpoint (public or HMAC-authenticated)
+- `parseStreamEvent` — typed frame parsing with null-safety for malformed frames
+- `executeRiskCalculation` — inline statistical delta analysis per event (< 500µs budget)
+- `rollingStats` — live event-rate mean and standard deviation
+- Exponential-backoff reconnection (1s → 30s cap)
+
+## Quick Start
+
+```bash
+npm install
+npm start          # connects to Wikimedia public real-time stream (~1000 events/min)
+```
+
+For authenticated private streams, configure `.env`:
+
+```env
+STREAM_CLIENT_ID=your_client_id
+STREAM_CLIENT_SECRET=your_client_secret
+NODE_PORT=8080
+METRICS_LEVEL=info   # or "debug" for verbose output
+```
+
+## Testing
+
+```bash
+npm test
+```
+
+Covers: HMAC signature generation, frame parsing, rolling statistics, connection lifecycle.
+
+## CI
+
+GitHub Actions runs on Node.js 20 and 22 with full TypeScript type-checking on every push.
