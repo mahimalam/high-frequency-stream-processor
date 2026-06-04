@@ -1,5 +1,7 @@
 # High-Frequency Stream Processor
 
+[![CI](https://github.com/mahimalam/high-frequency-stream-processor/actions/workflows/ci.yml/badge.svg)](https://github.com/mahimalam/high-frequency-stream-processor/actions/workflows/ci.yml)
+
 An enterprise-grade, low-latency real-time data stream processing engine built in TypeScript. Designed for sub-second WebSocket ingestion, statistical anomaly detection, and authenticated stream consumption.
 
 ## Architecture
